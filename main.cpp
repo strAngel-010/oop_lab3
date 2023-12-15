@@ -71,4 +71,22 @@ void checkIn(){
 }
 */
 
-int main(){}
+int main(){
+    Address* a1 = new Address("First Street", 1, 1);
+    Room* rooms_a1 = new Room[3];
+    rooms_a1[0] = Room("Toilet", 5);
+    rooms_a1[1] = Room("Bathroom", 7);
+    rooms_a1[2] = Room("Bedroom", 15);
+    Apartment* a = new Apartment(a1, rooms_a1, 3);
+
+    Address* a2 = new Address("First Street", 1, 2);
+    Room* rooms_a2 = new Room[4];
+    rooms_a1[0] = Room("Toilet", 5);
+    rooms_a1[1] = Room("Bathroom", 7);
+    rooms_a1[2] = Room("Bedroom", 15);
+    rooms_a1[3] = Room("Living Room", 15);
+    Flat* f = new Flat(a2, rooms_a2);
+
+    std::cout << *a << std::endl;
+    std::cout << *f;
+}

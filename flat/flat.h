@@ -12,7 +12,7 @@ namespace Prog3 {
         private: Room* rooms = nullptr;
         public:
             Flat();
-            Flat(Address* addr, Room* rooms) : Living(addr), rooms(rooms) {};
+            Flat(Address* addr, Room* rooms) noexcept : Living(addr), rooms(rooms) {};
             Flat(const Flat& ob);
             Flat(Flat&& ob) noexcept;
             ~Flat();

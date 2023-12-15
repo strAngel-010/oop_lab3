@@ -11,7 +11,7 @@ namespace Prog3 {
             Address* addr = nullptr;
         public:
             Living() = default;
-            Living(Address* addr) noexcept { this->addr = addr; }
+            Living(Address* addr) noexcept : addr(addr) {}
             Living(Living&& ob) noexcept : addr(ob.addr) { ob.addr = nullptr; }
             virtual ~Living();
 

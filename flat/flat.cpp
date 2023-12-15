@@ -64,11 +64,10 @@ namespace Prog3{
 
     void Flat::print(ostream& s) const {
         s << "Flat:" << std::endl;
-        unsigned int len;
         if (rooms){
             s << "Rooms:" << std::endl;
             for (int i = 0; i < 4; ++i){
-                s << i << ") " << rooms[i] << std::endl;
+                s << i+1 << ") " << rooms[i] << std::endl;
             }
         }
     }
