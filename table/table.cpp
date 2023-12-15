@@ -1,5 +1,8 @@
 #include "table.h"
 
+using std::vector;
+using std::endl;
+
 namespace Prog3 {
     Table::Table(Living** arr, unsigned int len, int* status, int* prices) {
         try {
@@ -116,5 +119,28 @@ namespace Prog3 {
             arr.pop_back();
         } catch (...) { throw; }
         return *this;
+    }
+
+    ostream& operator << (ostream& s, const Table& table){
+        vector<Keyspace>::iterator it;
+        vector<Keyspace>& arr = table.getLivingArr();
+        for (it = arr.begin(); it != arr.end(); ++it){
+            if (it->l) { s << it->l; } 
+            else { throw std::runtime_error("No pointer to living"); }
+            switch (it->status){
+                case -1:
+                    s << "No information about owners" << endl;
+                    break;
+                case 0:
+                    s << "No current owners" << endl;
+                    break;
+                case 1:
+                    s << "Living is owned" << endl;
+                    break;
+                default: throw std::runtime_error("Wrong status information");
+            }
+            s << "Price per square meter: " << it->price << endl << endl;
+        }
+        return s;
     }
 }

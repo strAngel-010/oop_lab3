@@ -8,6 +8,7 @@ void checkIn();
 
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
+/*
 int main(){
     unsigned int ans = 0;
     while (true){
@@ -68,3 +69,6 @@ void checkIn(){
 
     Address* address = new Address(street.c_str(), building, flat);
 }
+*/
+
+int main(){}
