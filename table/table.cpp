@@ -125,7 +125,7 @@ namespace Prog3 {
         vector<Keyspace>::iterator it;
         vector<Keyspace>& arr = table.getLivingArr();
         for (it = arr.begin(); it != arr.end(); ++it){
-            if (it->l) { s << it->l; } 
+            if (it->l) { s << *(it->l); } 
             else { throw std::runtime_error("No pointer to living"); }
             switch (it->status){
                 case -1:

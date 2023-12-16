@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include "table/table.h"
 #include "cottage/cottage.h"
 
 unsigned int start_dialog();
@@ -8,7 +9,7 @@ void checkIn();
 
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
-/*
+
 int main(){
     unsigned int ans = 0;
     while (true){
@@ -69,8 +70,9 @@ void checkIn(){
 
     Address* address = new Address(street.c_str(), building, flat);
 }
-*/
 
+//Test main() function for table and living output
+/*
 int main(){
     Address* a1 = new Address("First Street", 1, 1);
     Room* rooms_a1 = new Room[3];
@@ -80,13 +82,21 @@ int main(){
     Apartment* a = new Apartment(a1, rooms_a1, 3);
 
     Address* a2 = new Address("First Street", 1, 2);
-    Room* rooms_a2 = new Room[4];
-    rooms_a1[0] = Room("Toilet", 5);
-    rooms_a1[1] = Room("Bathroom", 7);
-    rooms_a1[2] = Room("Bedroom", 15);
-    rooms_a1[3] = Room("Living Room", 15);
+    Room* rooms_a2 = new Room[4]{};
+    rooms_a2[0] = Room("Toilet", 5);
+    rooms_a2[1] = Room("Bathroom", 7);
+    rooms_a2[2] = Room("Bedroom", 15);
+    rooms_a2[3] = Room("Living Room", 15);
     Flat* f = new Flat(a2, rooms_a2);
 
     std::cout << *a << std::endl;
-    std::cout << *f;
+    std::cout << *f << std::endl;
+
+    Living** living = new Living*[2];
+    living[0] = a;
+    living[1] = f;
+    Table t(living, 2);
+    std::cout << t;
+    delete[] living;
 }
+*/
