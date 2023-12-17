@@ -2,8 +2,10 @@
 #define OOPPROG3_APARTMENT_H
 
 #include <stdexcept>
+#include <iostream>
 #include "../living/living.h"
 #include "../room/room.h"
+#include "../aux_funcs/aux_funcs.h"
 
 namespace Prog3 {
     class Apartment : public Living{
@@ -30,6 +32,7 @@ namespace Prog3 {
             Apartment* clone() const override { return new Apartment(*this); }
 
             void print(ostream& s) const override;
+            int input(istream& s) override;
     };
 }
 

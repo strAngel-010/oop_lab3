@@ -1,11 +1,13 @@
 #ifndef OOPPROG3_COTTAGE_H
 #define OOPPROG3_COTTAGE_H
 
+#include <iostream>
 #include "../address/address.h"
 #include "../living/living.h"
 #include "../room/room.h"
 #include "../apartment/apartment.h"
 #include "../flat/flat.h"
+#include "../aux_funcs/aux_funcs.h"
 
 namespace Prog3 {
     class Cottage{
@@ -34,7 +36,7 @@ namespace Prog3 {
             Cottage &addLiving(Living** l);
 
             Cottage& operator = (const Cottage& ob);
-            friend istream& operator >> (istream&, const Cottage&);
+            friend std::istream& operator >> (std::istream&, Cottage&);
     };
     const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size);
 }

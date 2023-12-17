@@ -98,6 +98,28 @@ namespace Prog3{
         return s;
     }
 
+    istream& operator >> (istream& s, Room& room){
+        std::string name;
+        int func_res = input_string(s, "Enter name:", name);
+        if (func_res) { return s; }
+
+        int area;
+        func_res = input_num(s, "Enter area:", 1, std::numeric_limits<int>::max(), area);
+        if (func_res) { return s; }
+
+        std::string comment;
+        func_res = input_string(s, "Enter comment or 'E' to leave it empty:", comment);
+        if (func_res) { return s; }
+        if (comment == "E") { comment.erase(); }
+
+        try { 
+            if (!comment.empty()) { room = Room((char*)name.c_str(), area, (char*)comment.c_str()); }
+            else { room = Room((char*)name.c_str(), area); }
+        }
+        catch (...) { throw; }
+        return s;
+    }
+
     const Room* room_realloc(const Room* arr, int prev_size, int size){
         try{
             Room* new_arr = new Room[size];

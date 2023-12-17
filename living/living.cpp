@@ -26,4 +26,9 @@ namespace Prog3{
         l.print(s);
         return s;
     }
+
+    istream& operator >> (istream& s, Living& l){
+        l.input(s);
+        return s;
+    }
 }

@@ -71,4 +71,20 @@ namespace Prog3{
             }
         }
     }
+
+    int Flat::input(istream& s) {
+        try {
+            rooms = new Room[4];
+            for (int i = 0; i < 4; ++i) { 
+                std::cout << "Room " << i << ":" << std::endl;
+                s >> rooms[i]; 
+                if (s.eof()) {
+                    delete[] rooms;
+                    rooms = nullptr;
+                    return 1;
+                }
+            }
+        } catch (...) { throw; }
+        return 0;
+    }
 }

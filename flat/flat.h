@@ -28,6 +28,7 @@ namespace Prog3 {
             Flat* clone() const override { return new Flat(*this); }
 
             void print(ostream& s) const override;
+            int input(istream& s) override;
     };
 }
 

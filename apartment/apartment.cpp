@@ -89,4 +89,24 @@ namespace Prog3{
             }
         }
     }
+
+    int Apartment::input(istream& s) {
+        int ans;
+        int func_res = input_num(s, "Input number of rooms:", 1, std::numeric_limits<int>::max(), ans);
+        if (func_res) { return func_res; }
+        std::cout << "_._._._._._._._" << std::endl;
+        try {
+            rooms = new Room[ans];
+            for (int i = 0; i < ans; ++i) { 
+                std::cout << "Room " << i << ":" << std::endl;
+                s >> rooms[i]; 
+                if (s.eof()) {
+                    delete[] rooms;
+                    rooms = nullptr;
+                    return 1;
+                }
+            }
+        } catch (...) { throw; }
+        return 0;
+    }
 }

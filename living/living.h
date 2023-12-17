@@ -28,7 +28,9 @@ namespace Prog3 {
             virtual Living* clone() const = 0;
 
             virtual void print(ostream& s) const = 0;
+            virtual int input(istream& s) = 0;
             friend ostream& operator << (ostream&, const Living&);
+            friend istream& operator >> (istream&, Living&);
     };
 }
 

@@ -3,8 +3,10 @@
 
 #include <cstring>
 #include <iostream>
+#include <limits>
+#include "../aux_funcs/aux_funcs.h"
 
-using std::ostream;
+using std::ostream, std::istream;
 
 namespace Prog3{
     class Room {
@@ -29,6 +31,7 @@ namespace Prog3{
 
             Room& operator = (const Room& ob);
             friend ostream& operator << (ostream&, const Room&);
+            friend istream& operator >> (istream&, Room&);
     };
 
     const Room* room_realloc(const Room* arr, int prev_size, int size);

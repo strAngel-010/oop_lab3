@@ -5,7 +5,6 @@
 #include "table/table.h"
 #include "cottage/cottage.h"
 #include "aux_funcs/aux_funcs.h"
-//ToDo: Add aux_funcs library to project's CMakeLists
 
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
@@ -13,6 +12,7 @@ using std::cin, std::cout, std::endl;
 int start_dialog(int& ans);
 int check_in(Table& table, Cottage** arr, int& len);
 
+/*
 int main(){
     Table table;
     Cottage* cottages = nullptr;
@@ -36,6 +36,16 @@ int main(){
     cout << "Exiting..." << endl;
     if (cottages) { delete[] cottages; }
 }
+*/
+
+int main(){
+    Room r;
+    int test;
+    cin >> r;
+    cin >> test;
+    cout << r;
+    //ToDo: the rest of debugging
+}
 
 int start_dialog(int& ans){
     while (true) {
@@ -46,50 +56,28 @@ int start_dialog(int& ans){
         cout << "4. Find cheapest living" << endl;
         cout << "----------" << endl;
         
-        try { return input_num("", 1, 4, ans); }
+        try { return input_num(cin, "", 1, 4, ans); }
         catch (...) { throw; }
     }
-}
-
-int input_num(std::string msg, int range_first, int range_second, int& num){
-    while (true) {
-        if (!msg.empty()) { cout << msg << endl; }
-        cin >> num;
-        if (cin.eof()) { return 1; }
-        if (cin.bad()) { throw std::runtime_error("Input broken"); }
-        if (cin.good()){
-            if (num < range_first || num > range_second){
-                cout << "Wrong number, please repeat" << endl;
-            } else { return 0; }
-        }
-    }
-}
-
-int input_string(std::string msg, std::string& str){
-    if (!msg.empty()) { cout << msg << endl; }
-    cin >> str;
-    if (cin.eof()) { return 1; }
-    if (cin.bad()) { throw std::runtime_error("Input broken"); }
-    return 0;
 }
 
 //ToDo: remake check_in()
 int check_in(Table& table, Cottage** arr, int& len){
     int func_res = 0;
     std::string street;
-    try { func_res = input_string("Enter street name: ", street); }
+    try { func_res = input_string(cin, "Enter street name: ", street); }
     catch (...) { throw; }
     if (func_res) { return func_res; }
 
     int building;
     try { 
-        func_res = input_num("Enter building number: ", 1, std::numeric_limits<int>::max(), building); 
+        func_res = input_num(cin, "Enter building number: ", 1, std::numeric_limits<int>::max(), building); 
     } catch (...) { throw; }
     if (func_res) { return func_res; }
 
     int flat;
     try { 
-        func_res = input_num("Enter flat number: ", 1, std::numeric_limits<int>::max(), flat); 
+        func_res = input_num(cin, "Enter flat number: ", 1, std::numeric_limits<int>::max(), flat); 
     } catch (...) { throw; }
     if (func_res) { return func_res; }
 
@@ -97,12 +85,13 @@ int check_in(Table& table, Cottage** arr, int& len){
         Address* address = new Address(street.c_str(), building, flat);
         int res = table.findLiving(*address);
         if (res != -1){ 
+            //ToDo: debug this case
             table.setStatus(res, 1); 
             delete address;
         } else {
             cout << "No living with this address. Creating new living..." << endl;
             int ans;
-            func_res = input_num("Is it an apartment (1) or a flat (2)?", 1, 2, ans);
+            func_res = input_num(cin, "Is it an apartment (1) or a flat (2)?", 1, 2, ans);
             if (func_res) { 
                 delete address; 
                 return func_res; 
@@ -124,7 +113,6 @@ int check_in(Table& table, Cottage** arr, int& len){
             }
             table.addLiving(living[0], 1, 0);
             (*arr)[len-1] = Cottage(cottage_addr, living, 1);
-            //ToDo: debug checkin()
         }
     } catch (...) { throw; }
     cout << "Checked-in successfully" << endl << endl;

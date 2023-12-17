@@ -1,7 +1,12 @@
 #ifndef OOPPROG3_AUX_FUNCS_H
 #define OOPPROG3_AUX_FUNCS_H
 
+#include <string>
+#include <iostream>
+
 namespace Prog3 {
-    int input_num(std::string msg, int range_first, int range_second, int& num);
-    int input_string(std::string msg, std::string& str);
+    int input_num(std::istream& s, const char* msg, int range_first, int range_second, int& num);
+    int input_string(std::istream& s, const char* msg, std::string& str);
 }
+
+#endif

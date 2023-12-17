@@ -124,7 +124,49 @@ namespace Prog3{
         } catch (...){ throw; }
     }
 
-    friend istream& operator >> (istream&, const Cottage&){
-        //ToDo: Write >> operator
+    std::istream& operator >> (std::istream& s, Cottage& cottage){
+        try {
+            int len;
+            int func_res = input_num(s, "Enter number of living objects:", 1, std::numeric_limits<int>::max(), len);
+            if (func_res) { return s; }
+
+            unsigned int cur_len;
+            Living** living = cottage.getLiving(cur_len);
+            if (living) { delete[] living; }
+
+            living = new Living*[len];
+            int ans;
+            int flat_num;
+            for (int i = 0; i < len; ++i) {
+                Address* living_address = new Address(*cottage.getAddr()); 
+                func_res = input_num(s, "Enter (1) for an apartment or (2) for a flat:", 1, 2, ans);
+                func_res = input_num(s, "Enter apartment/flat number", 1, std::numeric_limits<int>::max(), flat_num);
+                if (func_res) { 
+                    for (int j = 0; j < i; ++j){ delete living[j]; }
+                    delete[] living;
+                    return s;
+                }
+                
+                living_address->setFlat(flat_num);
+                switch (ans){
+                    case 1:
+                        living[i] = new Apartment(living_address);
+                        break;
+                    case 2:
+                        living[i] = new Flat(living_address, nullptr);
+                        break;
+                    default:
+                        throw std::runtime_error("Error in switch");
+                }
+                s >> *living[i];
+                if (s.eof()){
+                    for (int j = 0; j < i; ++j){ delete living[j]; }
+                    delete[] living;
+                    return s;
+                }
+            }
+            cottage.setLiving(living, len);
+            return s;
+        } catch (...) { throw; }
     }
 }
