@@ -35,7 +35,7 @@ namespace Prog3{
     Cottage::~Cottage(){
         if (addr) { delete addr; }
         addr = nullptr;
-        for (int i = 0; i < (int)len; ++i){ delete living[i]; }
+        //for (int i = 0; i < (int)len; ++i){ delete living[i]; }
         if (living) { delete[] living; }
         living = nullptr;
         len = 0;
@@ -116,7 +116,7 @@ namespace Prog3{
         return *this;
     }
 
-    const Cottage* Cottage_realloc(const Cottage* arr, int prev_size, int size){
+    const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size){
         try{
             Cottage* new_arr = new Cottage[size];
             for (int i = 0; i < prev_size; ++i){ new_arr[i] = arr[i]; }

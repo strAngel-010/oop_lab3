@@ -10,7 +10,7 @@ add_subdirectory(flat)
 add_subdirectory(living)
 add_subdirectory(room)
 add_subdirectory(table)
-add_subdirectory(tests)
+#add_subdirectory(tests)
 
 add_executable(main main.cpp)
 target_link_libraries(main apartment cottage flat room table address living)

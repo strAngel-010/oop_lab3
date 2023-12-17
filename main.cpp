@@ -1,37 +1,43 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <limits>
 #include "table/table.h"
 #include "cottage/cottage.h"
 
-unsigned int start_dialog();
-void checkIn(Table& table, Cottage** arr, int& len);
-
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
+
+int start_dialog(int& ans);
+int input_num(std::string msg, int range_first, int range_second, int& num);
+int input_string(std::string msg, std::string& str);
+int check_in(Table& table, Cottage** arr, int& len);
 
 int main(){
     Table table;
     Cottage* cottages = nullptr;
     int len = 0;
-    unsigned int ans = 0;
+    int ans = 0;
+    int func_res = 0;
     while (true){
         try {
-            ans = start_dialog();
-            if (ans == 0) { break; }
+            func_res = start_dialog(ans);
+            if (func_res) { break; }
             switch (ans){
                 case 1:
-                    checkIn(table, &cottages);
+                    func_res = check_in(table, &cottages, len);
                     break;
-                //ToDo: other cases
+                default:
+                    throw std::runtime_error("Error in switch");
             }
+            if (func_res) { break; }
         } catch (...) { return 0; }
     }
     cout << "Exiting..." << endl;
+    if (cottages) { delete[] cottages; }
 }
 
-unsigned int start_dialog(){
-    unsigned int ans = 0;
+int start_dialog(int& ans){
     while (true) {
         cout << "Choose an option:" << endl;
         cout << "1. Check in" << endl;
@@ -40,48 +46,88 @@ unsigned int start_dialog(){
         cout << "4. Find cheapest living" << endl;
         cout << "----------" << endl;
         
-        cin >> ans;
-        if (cin.eof()) { return 0; }
+        try { return input_num("", 1, 4, ans); }
+        catch (...) { throw; }
+    }
+}
+
+int input_num(std::string msg, int range_first, int range_second, int& num){
+    while (true) {
+        if (!msg.empty()) { cout << msg << endl; }
+        cin >> num;
+        if (cin.eof()) { return 1; }
         if (cin.bad()) { throw std::runtime_error("Input broken"); }
         if (cin.good()){
-            if (ans > 4 || ans == 0) { cout << "Wrong number, please repeat" << endl; }
-            else { return ans; }
+            if (num < range_first || num > range_second){
+                cout << "Wrong number, please repeat" << endl;
+            } else { return 0; }
         }
     }
 }
 
-void checkIn(Table& table, Cottage** arr, int& len){
-    cout << "Enter street name: ";
-    string street;
-    cin >> street;
-    if (cin.eof()) { return; }
+int input_string(std::string msg, std::string& str){
+    if (!msg.empty()) { cout << msg << endl; }
+    cin >> str;
+    if (cin.eof()) { return 1; }
     if (cin.bad()) { throw std::runtime_error("Input broken"); }
-    cout << endl;
+    return 0;
+}
 
-    cout << "Enter building number: ";
-    unsigned int building;
-    cin >> building;
-    if (cin.eof()) { return; }
-    if (cin.bad()) { throw std::runtime_error("Input broken"); }
-    cout << endl;
+int check_in(Table& table, Cottage** arr, int& len){
+    int func_res = 0;
+    std::string street;
+    try { func_res = input_string("Enter street name: ", street); }
+    catch (...) { throw; }
+    if (func_res) { return func_res; }
 
-    cout << "Enter flat number: ";
-    unsigned int flat;
-    cin >> flat;
-    if (cin.eof()) { return; }
-    if (cin.bad()) { throw std::runtime_error("Input broken"); }
-    cout << endl;
+    int building;
+    try { 
+        func_res = input_num("Enter building number: ", 1, std::numeric_limits<int>::max(), building); 
+    } catch (...) { throw; }
+    if (func_res) { return func_res; }
 
-    Address address(street.c_str(), building, flat);
+    int flat;
+    try { 
+        func_res = input_num("Enter flat number: ", 1, std::numeric_limits<int>::max(), flat); 
+    } catch (...) { throw; }
+    if (func_res) { return func_res; }
+
     try{
-        int res = table.findLiving(address);
-        if (res != -1){ table.setStatus(res, 1); }
-        else {
-            *arr = cottage_realloc(*arr, len, len+1);
+        Address* address = new Address(street.c_str(), building, flat);
+        int res = table.findLiving(*address);
+        if (res != -1){ 
+            table.setStatus(res, 1); 
+            delete address;
+        } else {
+            cout << "No living with this address. Creating new living..." << endl;
+            int ans;
+            func_res = input_num("Is it an apartment (1) or a flat (2)?", 1, 2, ans);
+            if (func_res) { 
+                delete address; 
+                return func_res; 
+            }
+            
+            *arr = (Cottage*)cottage_realloc(*arr, len, len+1);
             ++len;
-            //ToDo: create a new Cottage
+            Address* cottage_addr = new Address(street.c_str(), building);
+            Living** living = new Living*[1];
+            switch (ans){
+                case 1:
+                    living[0] = new Apartment(address);
+                    break;
+                case 2:
+                    living[0] = new Flat(address, nullptr);
+                    break;
+                default:
+                    throw std::runtime_error("Error in switch");
+            }
+            table.addLiving(living[0], 1, 0);
+            (*arr)[len-1] = Cottage(cottage_addr, living, 1);
+            //ToDo: debug checkin()
         }
     } catch (...) { throw; }
+    cout << "Checked-in successfully" << endl << endl;
+    return 0;
 }
 
 //Test main() function for Table and Living output
