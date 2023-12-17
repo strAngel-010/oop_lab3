@@ -35,7 +35,6 @@ namespace Prog3{
     Cottage::~Cottage(){
         if (addr) { delete addr; }
         addr = nullptr;
-        //for (int i = 0; i < (int)len; ++i){ delete living[i]; }
         if (living) { delete[] living; }
         living = nullptr;
         len = 0;
@@ -123,5 +122,9 @@ namespace Prog3{
             delete[] arr;
             return new_arr;
         } catch (...){ throw; }
+    }
+
+    friend istream& operator >> (istream&, const Cottage&){
+        //ToDo: Write >> operator
     }
 }

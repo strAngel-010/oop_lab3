@@ -4,13 +4,13 @@
 #include <limits>
 #include "table/table.h"
 #include "cottage/cottage.h"
+#include "aux_funcs/aux_funcs.h"
+//ToDo: Add aux_funcs library to project's CMakeLists
 
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
 
 int start_dialog(int& ans);
-int input_num(std::string msg, int range_first, int range_second, int& num);
-int input_string(std::string msg, std::string& str);
 int check_in(Table& table, Cottage** arr, int& len);
 
 int main(){
@@ -73,6 +73,7 @@ int input_string(std::string msg, std::string& str){
     return 0;
 }
 
+//ToDo: remake check_in()
 int check_in(Table& table, Cottage** arr, int& len){
     int func_res = 0;
     std::string street;

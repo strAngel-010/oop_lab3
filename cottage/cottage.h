@@ -34,6 +34,7 @@ namespace Prog3 {
             Cottage &addLiving(Living** l);
 
             Cottage& operator = (const Cottage& ob);
+            friend istream& operator >> (istream&, const Cottage&);
     };
     const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size);
 }
