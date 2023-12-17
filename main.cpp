@@ -5,12 +5,15 @@
 #include "cottage/cottage.h"
 
 unsigned int start_dialog();
-void checkIn();
+void checkIn(Table& table, Cottage** arr, int& len);
 
 using namespace Prog3;
 using std::cin, std::cout, std::endl;
 
 int main(){
+    Table table;
+    Cottage* cottages = nullptr;
+    int len = 0;
     unsigned int ans = 0;
     while (true){
         try {
@@ -18,8 +21,9 @@ int main(){
             if (ans == 0) { break; }
             switch (ans){
                 case 1:
-                    checkIn();
+                    checkIn(table, &cottages);
                     break;
+                //ToDo: other cases
             }
         } catch (...) { return 0; }
     }
@@ -46,7 +50,7 @@ unsigned int start_dialog(){
     }
 }
 
-void checkIn(){
+void checkIn(Table& table, Cottage** arr, int& len){
     cout << "Enter street name: ";
     string street;
     cin >> street;
@@ -68,10 +72,19 @@ void checkIn(){
     if (cin.bad()) { throw std::runtime_error("Input broken"); }
     cout << endl;
 
-    Address* address = new Address(street.c_str(), building, flat);
+    Address address(street.c_str(), building, flat);
+    try{
+        int res = table.findLiving(address);
+        if (res != -1){ table.setStatus(res, 1); }
+        else {
+            *arr = cottage_realloc(*arr, len, len+1);
+            ++len;
+            //ToDo: create a new Cottage
+        }
+    } catch (...) { throw; }
 }
 
-//Test main() function for table and living output
+//Test main() function for Table and Living output
 /*
 int main(){
     Address* a1 = new Address("First Street", 1, 1);

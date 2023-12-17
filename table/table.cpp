@@ -106,7 +106,7 @@ namespace Prog3 {
                     return std::distance(arr.begin(), it);
                 }
             }
-            throw std::runtime_error("Living not found");
+            return -1;
         } catch (...) { throw; }
     }
 

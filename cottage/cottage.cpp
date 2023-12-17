@@ -100,4 +100,28 @@ namespace Prog3{
             return area;
         } catch (...) { throw; }
     }
+
+    Cottage& Cottage::operator = (const Cottage& ob){
+        try {
+            if (addr) { delete addr; }
+            addr = nullptr;
+            if (ob.addr) { addr = new Address(*ob.addr); }
+
+            if (living) { delete[] living; }
+            living = nullptr;
+            if (ob.len) { std::copy(ob.living, ob.living + len, living); }
+
+            len = ob.len;
+        } catch (...) { throw; }
+        return *this;
+    }
+
+    const Cottage* Cottage_realloc(const Cottage* arr, int prev_size, int size){
+        try{
+            Cottage* new_arr = new Cottage[size];
+            for (int i = 0; i < prev_size; ++i){ new_arr[i] = arr[i]; }
+            delete[] arr;
+            return new_arr;
+        } catch (...){ throw; }
+    }
 }

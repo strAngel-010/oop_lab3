@@ -32,7 +32,10 @@ namespace Prog3 {
             Room** getRooms(unsigned int& len) const;
             unsigned int getArea() const;
             Cottage &addLiving(Living** l);
+
+            Cottage& operator = (const Cottage& ob);
     };
+    const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size);
 }
 
 #endif
