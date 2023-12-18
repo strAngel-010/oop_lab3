@@ -24,4 +24,6 @@ namespace Prog3{
         if (s.bad()) { throw std::runtime_error("Input broken"); }
         return 0;
     }
+
+    //ToDo: add template realloc
 }

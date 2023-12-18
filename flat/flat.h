@@ -11,7 +11,7 @@ namespace Prog3 {
     class Flat : public Living{
         private: Room* rooms = nullptr;
         public:
-            Flat();
+            Flat() = default;
             Flat(Address* addr, Room* rooms) noexcept : Living(addr), rooms(rooms) {};
             Flat(const Flat& ob);
             Flat(Flat&& ob) noexcept;

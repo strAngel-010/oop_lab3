@@ -28,6 +28,7 @@ namespace Prog3{
             unsigned int getFlat() const noexcept { return flat; }
             
             friend ostream& operator << (ostream&, const Address&);
+            friend bool operator == (const Address& first, const Address& second) noexcept;
     };
 }
 

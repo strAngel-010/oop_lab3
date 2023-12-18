@@ -61,4 +61,10 @@ namespace Prog3{
         if (addr.getFlat()) { s << addr.getFlat(); }
         return s;
     }
+
+    bool operator == (const Address& first, const Address& second) noexcept{
+        return std::strcmp(first.getStreet(), second.getStreet()) == 0 &&
+        first.getBuilding() == second.getBuilding() &&
+        first.getFlat() == second.getFlat();
+    }
 }

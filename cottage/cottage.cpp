@@ -54,9 +54,9 @@ namespace Prog3{
         return *this;
     }
 
-    Cottage &Cottage::setAddr(const Address& addr) noexcept {
+    Cottage &Cottage::setAddr(Address* addr) noexcept {
         if (this->addr){ delete this->addr; }
-        this->addr = (Address*)&addr;
+        this->addr = addr;
         return *this;
     }
 
@@ -124,46 +124,60 @@ namespace Prog3{
         } catch (...){ throw; }
     }
 
+    int find_cottage(const Address& addr, const Cottage* arr, int len){
+        try {
+            for (int i = 0; i < len; ++i){
+                if (arr[i].getAddr() && *(arr[i].getAddr()) == addr){
+                    return i;
+                }
+            }
+        } catch (...) { throw; }
+        return -1;
+    }
+
+    std::ostream& operator << (std::ostream& s, const Cottage& cottage){
+        if (cottage.getAddr()) { s << "Address: " << *cottage.getAddr() << std::endl; }
+        unsigned int len;
+        Living** living = cottage.getLiving(len);
+        if (len){
+            try {
+                for (int i = 0; i < (int)len; ++i){
+                    s << *living[i];
+                }
+            } catch (...) { throw; }
+        }
+        return s;
+    }
+
     std::istream& operator >> (std::istream& s, Cottage& cottage){
         try {
-            int len;
-            int func_res = input_num(s, "Enter number of living objects:", 1, std::numeric_limits<int>::max(), len);
-            if (func_res) { return s; }
+            unsigned int len;
+            Living** living = cottage.getLiving(len);
+            living = new Living*[len+1];
+            ++len;
 
-            unsigned int cur_len;
-            Living** living = cottage.getLiving(cur_len);
-            if (living) { delete[] living; }
-
-            living = new Living*[len];
             int ans;
-            int flat_num;
-            for (int i = 0; i < len; ++i) {
-                Address* living_address = new Address(*cottage.getAddr()); 
-                func_res = input_num(s, "Enter (1) for an apartment or (2) for a flat:", 1, 2, ans);
-                func_res = input_num(s, "Enter apartment/flat number", 1, std::numeric_limits<int>::max(), flat_num);
-                if (func_res) { 
-                    for (int j = 0; j < i; ++j){ delete living[j]; }
-                    delete[] living;
-                    return s;
-                }
-                
-                living_address->setFlat(flat_num);
-                switch (ans){
-                    case 1:
-                        living[i] = new Apartment(living_address);
-                        break;
-                    case 2:
-                        living[i] = new Flat(living_address, nullptr);
-                        break;
-                    default:
-                        throw std::runtime_error("Error in switch");
-                }
-                s >> *living[i];
-                if (s.eof()){
-                    for (int j = 0; j < i; ++j){ delete living[j]; }
-                    delete[] living;
-                    return s;
-                }
+            int func_res = input_num(s, "Enter (1) for an apartment or (2) for a flat:", 1, 2, ans);
+            if (func_res) { 
+                delete[] living; 
+                return s;
+            }
+
+            switch (ans){
+                case 1:
+                    living[len-1] = new Apartment(living_address);
+                    break;
+                case 2:
+                    living[len-1] = new Flat(living_address, nullptr);
+                    break;
+                default:
+                    throw std::runtime_error("Error in switch");
+            }
+            s >> *living[len-1];
+            if (s.eof()){
+                delete living[len-1];
+                delete[] living;
+                return s;
             }
             cottage.setLiving(living, len);
             return s;

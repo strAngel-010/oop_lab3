@@ -105,7 +105,9 @@ namespace Prog3{
                     rooms = nullptr;
                     return 1;
                 }
+                std::cout << "----------" << std::endl;
             }
+            len = ans;
         } catch (...) { throw; }
         return 0;
     }

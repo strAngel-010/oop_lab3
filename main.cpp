@@ -12,7 +12,6 @@ using std::cin, std::cout, std::endl;
 int start_dialog(int& ans);
 int check_in(Table& table, Cottage** arr, int& len);
 
-/*
 int main(){
     Table table;
     Cottage* cottages = nullptr;
@@ -35,16 +34,6 @@ int main(){
     }
     cout << "Exiting..." << endl;
     if (cottages) { delete[] cottages; }
-}
-*/
-
-int main(){
-    Room r;
-    int test;
-    cin >> r;
-    cin >> test;
-    cout << r;
-    //ToDo: the rest of debugging
 }
 
 int start_dialog(int& ans){
@@ -90,29 +79,35 @@ int check_in(Table& table, Cottage** arr, int& len){
             delete address;
         } else {
             cout << "No living with this address. Creating new living..." << endl;
-            int ans;
-            func_res = input_num(cin, "Is it an apartment (1) or a flat (2)?", 1, 2, ans);
+            Address* cottage_addr = new Address(street.c_str(), building);
+            res = find_cottage(*cottage_addr, *arr, len);
+            unsigned int living_len;
+            Living* living_to_add;
+            if (res != -1){
+                delete cottage_addr;
+                cin >> *arr[res];
+                living_to_add = arr[res]->getLiving(living_len)[living_len-1];
+                living_to_add->setAddr(address);
+            }
+            else {
+                cout << "No cottage for this living found. Creating new cottage..." << endl;
+                *arr = (Cottage*)cottage_realloc(*arr, len, len+1);
+                ++len;
+                cin >> *arr[len-1];
+                living_to_add = arr[len-1]->getLiving(living_len)[living_len-1];
+                living_to_add->setAddr(address);
+                arr[len-1]->setAddr(cottage_addr);
+            }
+
+            int price;
+            try { 
+                func_res = input_num(cin, "Enter price per sq meter: ", 0, std::numeric_limits<int>::max(), price); 
+            } catch (...) { throw; }
             if (func_res) { 
-                delete address; 
+                delete living_to_add;
                 return func_res; 
             }
-            
-            *arr = (Cottage*)cottage_realloc(*arr, len, len+1);
-            ++len;
-            Address* cottage_addr = new Address(street.c_str(), building);
-            Living** living = new Living*[1];
-            switch (ans){
-                case 1:
-                    living[0] = new Apartment(address);
-                    break;
-                case 2:
-                    living[0] = new Flat(address, nullptr);
-                    break;
-                default:
-                    throw std::runtime_error("Error in switch");
-            }
-            table.addLiving(living[0], 1, 0);
-            (*arr)[len-1] = Cottage(cottage_addr, living, 1);
+            table.addLiving(living_to_add, 1, price);
         }
     } catch (...) { throw; }
     cout << "Checked-in successfully" << endl << endl;

@@ -1,10 +1,12 @@
 #include "flat.h"
 
 namespace Prog3{
+    /*
     Flat::Flat() : Living() {
         try { rooms = new Room[4]; }
         catch (...) { throw; }
     }
+    */
 
     Flat::Flat(const Flat& ob) : Living(nullptr) {
         try{
@@ -83,6 +85,7 @@ namespace Prog3{
                     rooms = nullptr;
                     return 1;
                 }
+                std::cout << "----------" << std::endl;
             }
         } catch (...) { throw; }
         return 0;

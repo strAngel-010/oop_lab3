@@ -99,10 +99,7 @@ namespace Prog3 {
             Living* l;
             for (it = arr.begin(); it != arr.end(); ++it){
                 l = it->l;
-                if (l && l->getAddr() && 
-                std::strcmp(l->getAddr()->getStreet(), addr.getStreet()) == 0 &&
-                l->getAddr()->getBuilding() == addr.getBuilding() &&
-                l->getAddr()->getFlat() == addr.getFlat()){
+                if (l && l->getAddr() && *(l->getAddr()) == addr){
                     return std::distance(arr.begin(), it);
                 }
             }

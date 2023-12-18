@@ -25,7 +25,7 @@ namespace Prog3 {
 
             Cottage &setLiving(Living** living, unsigned int len) noexcept;
             Cottage &setAddr(const char* str, unsigned int building);
-            Cottage &setAddr(const Address& addr) noexcept;
+            Cottage &setAddr(Address* addr) noexcept;
 
             Address* getAddr() const noexcept { return addr; };
             Living** getLiving(unsigned int& len) const noexcept;
@@ -36,9 +36,11 @@ namespace Prog3 {
             Cottage &addLiving(Living** l);
 
             Cottage& operator = (const Cottage& ob);
+            friend std::ostream& operator << (std::ostream&, const Cottage&);
             friend std::istream& operator >> (std::istream&, Cottage&);
     };
     const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size);
+    int find_cottage(const Address& addr, const Cottage* arr, int len);
 }
 
 #endif
