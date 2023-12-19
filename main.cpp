@@ -11,6 +11,7 @@ using std::cin, std::cout, std::endl;
 
 int start_dialog(int& ans);
 int check_in(Table& table, Cottage** arr, int& len);
+void check_out(Table& table);
 
 int main(){
     Table table;
@@ -25,6 +26,12 @@ int main(){
             switch (ans){
                 case 1:
                     func_res = check_in(table, &cottages, len);
+                    break;
+                case 2:
+                    check_out(table);
+                    break;
+                case 5:
+                    cout << table;
                     break;
                 default:
                     throw std::runtime_error("Error in switch");
@@ -43,35 +50,23 @@ int start_dialog(int& ans){
         cout << "2. Check out" << endl;
         cout << "3. List all unoccupied living" << endl;
         cout << "4. Find cheapest living" << endl;
+        cout << "5. Print table" << endl;
         cout << "----------" << endl;
         
-        try { return input_num(cin, "", 1, 4, ans); }
+        try { return input_num(cin, nullptr, 1, 5, ans); }
         catch (...) { throw; }
     }
 }
 
-//ToDo: remake check_in()
 int check_in(Table& table, Cottage** arr, int& len){
-    int func_res = 0;
-    std::string street;
-    try { func_res = input_string(cin, "Enter street name: ", street); }
-    catch (...) { throw; }
-    if (func_res) { return func_res; }
-
-    int building;
-    try { 
-        func_res = input_num(cin, "Enter building number: ", 1, std::numeric_limits<int>::max(), building); 
-    } catch (...) { throw; }
-    if (func_res) { return func_res; }
-
-    int flat;
-    try { 
-        func_res = input_num(cin, "Enter flat number: ", 1, std::numeric_limits<int>::max(), flat); 
-    } catch (...) { throw; }
-    if (func_res) { return func_res; }
-
     try{
-        Address* address = new Address(street.c_str(), building, flat);
+        Address* address = new Address();
+        cin >> *address;
+        if (cin.eof()){
+            delete address;
+            return 1;
+        }
+
         int res = table.findLiving(*address);
         if (res != -1){ 
             //ToDo: debug this case
@@ -79,13 +74,17 @@ int check_in(Table& table, Cottage** arr, int& len){
             delete address;
         } else {
             cout << "No living with this address. Creating new living..." << endl;
-            Address* cottage_addr = new Address(street.c_str(), building);
+            Address* cottage_addr = new Address(address->getStreet(), address->getBuilding());
             res = find_cottage(*cottage_addr, *arr, len);
             unsigned int living_len;
             Living* living_to_add;
             if (res != -1){
                 delete cottage_addr;
-                cin >> *arr[res];
+                cin >> *(arr[res]);
+                if (cin.eof()){
+                    delete address;
+                    return 1;
+                }
                 living_to_add = arr[res]->getLiving(living_len)[living_len-1];
                 living_to_add->setAddr(address);
             }
@@ -94,12 +93,18 @@ int check_in(Table& table, Cottage** arr, int& len){
                 *arr = (Cottage*)cottage_realloc(*arr, len, len+1);
                 ++len;
                 cin >> *arr[len-1];
+                if (cin.eof()){
+                    delete address;
+                    delete cottage_addr;
+                    return 1;
+                }
                 living_to_add = arr[len-1]->getLiving(living_len)[living_len-1];
                 living_to_add->setAddr(address);
                 arr[len-1]->setAddr(cottage_addr);
             }
 
             int price;
+            int func_res;
             try { 
                 func_res = input_num(cin, "Enter price per sq meter: ", 0, std::numeric_limits<int>::max(), price); 
             } catch (...) { throw; }
@@ -112,6 +117,25 @@ int check_in(Table& table, Cottage** arr, int& len){
     } catch (...) { throw; }
     cout << "Checked-in successfully" << endl << endl;
     return 0;
+}
+
+void check_out(Table& table){
+    try {
+        Address* address = new Address();
+        cin >> *address;
+        if (cin.eof()){
+            delete address;
+            return;
+        }
+
+        int res = table.findLiving(*address);
+        if (res != -1){ 
+            table.setStatus(res, 0); 
+            cout << "Checked-out successfully" << endl;
+        }
+        else { cout << "No living with this address found" << endl << endl;}
+        delete address;
+    } catch (...) { throw; }
 }
 
 //Test main() function for Table and Living output

@@ -3,8 +3,10 @@
 
 #include <cstring>
 #include <iostream>
+#include <limits>
+#include "../aux_funcs/aux_funcs.h"
 
-using std::ostream;
+using std::ostream, std::istream;
 
 namespace Prog3{
     class Address {
@@ -28,6 +30,7 @@ namespace Prog3{
             unsigned int getFlat() const noexcept { return flat; }
             
             friend ostream& operator << (ostream&, const Address&);
+            friend istream& operator >> (istream&, Address&);
             friend bool operator == (const Address& first, const Address& second) noexcept;
     };
 }

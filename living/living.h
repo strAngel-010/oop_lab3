@@ -32,7 +32,7 @@ namespace Prog3 {
             friend ostream& operator << (ostream&, const Living&);
             friend istream& operator >> (istream&, Living&);
     };
-    const Living** living_realloc(const Living** arr, int prev_size, int size);
+    Living** living_realloc(const Living** arr, int prev_size, int size);
 }
 
 #endif

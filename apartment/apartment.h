@@ -13,7 +13,7 @@ namespace Prog3 {
             Room* rooms = nullptr;
             unsigned int len = 0;
         public:
-            Apartment() : Living() {};
+            Apartment() = default;
             Apartment(Address* addr, Room* rooms = nullptr, unsigned int len = 0) : Living(addr), rooms(rooms), len(len) {};
             Apartment(const Apartment& ob);
             Apartment(Apartment&& ob) noexcept;

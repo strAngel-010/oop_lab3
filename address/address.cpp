@@ -1,5 +1,7 @@
 #include "address.h"
 
+using std::cin;
+
 namespace Prog3{
     Address::Address(const char* street, unsigned int building, unsigned int flat){
         try{
@@ -60,6 +62,23 @@ namespace Prog3{
         if (addr.getBuilding()) { s << addr.getBuilding() << " "; }
         if (addr.getFlat()) { s << addr.getFlat(); }
         return s;
+    }
+
+    istream& operator >> (istream& s, Address& addr){
+        try{
+            if (addr.getStreet()) { delete[] addr.getStreet(); }
+            std::string street;
+            int func_res = input_string(s, "Enter street name:", street);
+            int building;
+            func_res = input_num(cin, "Enter building number: ", 1, std::numeric_limits<int>::max(), building);
+            int flat;
+            func_res = input_num(cin, "Enter flat number: ", 1, std::numeric_limits<int>::max(), flat);
+            if (func_res) { return s; }
+            addr.setStreet(street.c_str());
+            addr.setBuilding(building);
+            addr.setFlat(flat);
+            return s;
+        } catch (...) { throw; }
     }
 
     bool operator == (const Address& first, const Address& second) noexcept{

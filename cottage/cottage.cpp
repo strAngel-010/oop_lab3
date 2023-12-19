@@ -41,7 +41,6 @@ namespace Prog3{
     }
 
     Cottage &Cottage::setLiving(Living** living, unsigned int len) noexcept {
-        if (this->living){ delete this->living; }
         this->living = living;
         this->len = len;
         return *this;
@@ -153,7 +152,7 @@ namespace Prog3{
         try {
             unsigned int len;
             Living** living = cottage.getLiving(len);
-            living = new Living*[len+1];
+            living = living_realloc((const Living**)living, len, len+1);
             ++len;
 
             int ans;
@@ -165,10 +164,10 @@ namespace Prog3{
 
             switch (ans){
                 case 1:
-                    living[len-1] = new Apartment(living_address);
+                    living[len-1] = new Apartment();
                     break;
                 case 2:
-                    living[len-1] = new Flat(living_address, nullptr);
+                    living[len-1] = new Flat();
                     break;
                 default:
                     throw std::runtime_error("Error in switch");
