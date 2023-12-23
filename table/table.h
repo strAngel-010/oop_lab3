@@ -4,6 +4,8 @@
 #include <stdexcept>
 #include <vector>
 #include "../living/living.h"
+#include "../apartment/apartment.h"
+#include "../flat/flat.h"
 
 using std::vector;
 
@@ -34,6 +36,7 @@ namespace Prog3{
 
             Table &addLiving(Living* living, int status = 0, int price = 0);
             int findLiving(Address& addr) const;
+            void findCheapest(int& apartment_ind, int& flat_ind) const;
             Table &removeLiving(unsigned int ind);
 
             friend ostream& operator << (ostream&, const Table&);

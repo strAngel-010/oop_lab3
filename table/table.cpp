@@ -107,6 +107,31 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
+    void Table::findCheapest(int& apartment_ind, int& flat_ind) const{
+        try{
+            apartment_ind = -1;
+            flat_ind = -1;
+            std::vector<Keyspace>::const_iterator it;
+            for (it = arr.begin(); it != arr.end(); ++it){
+                if (dynamic_cast<Apartment*>(it->l)){
+                    if (apartment_ind == -1) { 
+                        apartment_ind = std::distance(arr.begin(), it);
+                    }
+                    if (arr[apartment_ind].price < it->price) { 
+                        apartment_ind = std::distance(arr.begin(), it);
+                    }
+                } else {
+                    if (flat_ind == -1) { 
+                        flat_ind = std::distance(arr.begin(), it);
+                    }
+                    if (arr[flat_ind].price < it->price) { 
+                        flat_ind = std::distance(arr.begin(), it);
+                    }
+                }
+            }
+        } catch (...) { throw; }
+    }
+
     Table &Table::removeLiving(unsigned int ind){
         if (ind >= arr.size()) { throw std::runtime_error("Wrong index"); }
 
