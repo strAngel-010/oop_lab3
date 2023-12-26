@@ -31,13 +31,4 @@ namespace Prog3{
         l.input(s);
         return s;
     }
-
-    Living** living_realloc(const Living** arr, int prev_size, int size){
-        try{
-            Living** new_arr = new Living*[size];
-            for (int i = 0; i < prev_size; ++i){ new_arr[i] = (Living*)arr[i]; }
-            delete[] arr;
-            return new_arr;
-        } catch (...){ throw; }
-    }
 }

@@ -56,7 +56,7 @@ namespace Prog3 {
         }
     }
 
-    int App::check_in(Table& table, Cottage** arr, int& len){
+    int App::check_in(Table<Keyspace>& table, Cottage** arr, int& len){
         try{
             Address* address = new Address();
             cin >> *address;
@@ -87,7 +87,7 @@ namespace Prog3 {
                 }
                 else {
                     cout << "No cottage for this living found. Creating new cottage..." << endl;
-                    *arr = (Cottage*)cottage_realloc(*arr, len, len+1);
+                    *arr = (Cottage*)my_realloc(*arr, len, len+1);
                     ++len;
                     cin >> *arr[len-1];
                     if (cin.eof()){
@@ -116,7 +116,7 @@ namespace Prog3 {
         return 0;
     }
 
-    void App::check_out(Table& table){
+    void App::check_out(Table<Keyspace>& table){
         try {
             Address* address = new Address();
             cin >> *address;
@@ -136,21 +136,20 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    void App::print_unsettled(Table& table){
-        vector<Keyspace>& arr = table.getLivingArr();
-        vector<Keyspace>::iterator it;
-        for (it = arr.begin(); it != arr.end(); ++it){
+    void App::print_unsettled(Table<Keyspace>& table){
+        Table<Keyspace>::TableIterator it;
+        for (it = table.begin(); it != table.end(); ++it){
             if (it->status == 0) { cout << *(it->l); }
         }
         cout << endl;
     }
 
-    void App::print_cheapest(Table& table){
+    void App::print_cheapest(Table<Keyspace>& table){
         int apartment_ind = -1;
         int flat_ind = -1;
         try {
             table.findCheapest(apartment_ind, flat_ind);
-            vector<Keyspace>& arr = table.getLivingArr();
+            Keyspace* arr = table.getLivingArr();
             if (apartment_ind != -1){
                 cout << "Cheapest apartment: " << endl;
                 cout << *(arr[apartment_ind].l);

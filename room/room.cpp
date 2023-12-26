@@ -119,13 +119,4 @@ namespace Prog3{
         catch (...) { throw; }
         return s;
     }
-
-    const Room* room_realloc(const Room* arr, int prev_size, int size){
-        try{
-            Room* new_arr = new Room[size];
-            for (int i = 0; i < prev_size; ++i){ new_arr[i] = arr[i]; }
-            delete[] arr;
-            return new_arr;
-        } catch (...){ throw; }
-    }
 }

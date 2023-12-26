@@ -3,35 +3,41 @@
 using std::vector;
 using std::endl;
 
+template <typename T>
+using Iterator = Prog3::Table<T>::TableIterator;
+
 namespace Prog3 {
     Table::Table(Living** arr, unsigned int len, int* status, int* prices) {
         try {
+            this->arr = new Keyspace[len];
+            this->len = len;
+            allocated_len = len;
+
             for (int i = 0; i < (int)len; ++i){
-                Keyspace k;
-                k.l = arr[i];
+                this->arr[i].l = arr[i];
                 
-                if (status) { k.status = status[i]; }
-                if (prices) { k.price = prices[i]; }
-                this->arr.push_back(k);
+                if (status) { this->arr[i].status = status[i]; }
+                if (prices) { this->arr[i].price = prices[i]; }
             }
         } catch (...) { throw; }
     }
 
     Table::~Table(){
-        std::vector<Keyspace>::iterator it;
+        Iterator it;
         for (it = arr.begin(); it != arr.end(); ++it){
             delete it->l;
         }
-        arr.clear();
+        delete[] arr;
     }
 
     Table &Table::setLiving(Living** arr, unsigned int len) {
         try {
-            this->arr.clear();
+            if (this->arr) { delete[] this->arr; }
+            this->arr = nullptr;
+            this->arr = new Keyspace[len];
             for (int i = 0; i < (int)len; ++i){
-                Keyspace k;
-                k.l = arr[i];
-                this->arr.push_back(k); }
+                this->arr[i].l = arr[i];
+            }
         } catch (...) { throw; }
         
         return *this;
@@ -42,7 +48,7 @@ namespace Prog3 {
             throw std::runtime_error("Wrong status (must be >=-1 && <= 1)");
         }
         
-        if (ind >= arr.size()) {
+        if (ind >= len) {
             throw std::runtime_error("Wrong index");
         }
 
@@ -52,7 +58,7 @@ namespace Prog3 {
     }
 
     Table &Table::setPrice(unsigned int ind, int price){
-        if (ind >= arr.size()) {
+        if (ind >= len) {
             throw std::runtime_error("Wrong index");
         }
 
@@ -63,21 +69,21 @@ namespace Prog3 {
 
     Living* Table::getLiving(unsigned int ind) const {
         try{
-            if (ind >= arr.size()) { throw std::runtime_error("Wrong index"); }
+            if (ind >= len) { throw std::runtime_error("Wrong index"); }
             return arr[ind].l;
         }
         catch (...) { throw; }
     }
 
     int Table::getStatus(unsigned int ind) const {
-        if (ind >= arr.size()) { throw std::runtime_error("Wrong index"); }
+        if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try { return arr[ind].status; }
         catch (...) { throw; }
     }
 
     int Table::getPrice(unsigned int ind) const {
-        if (ind >= arr.size()) { throw std::runtime_error("Wrong index"); }
+        if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try { return arr[ind].price; }
         catch (...) { throw; }
@@ -85,22 +91,26 @@ namespace Prog3 {
 
     Table &Table::addLiving(Living* living, int status, int price){
         if (status < -1 || status > 1) { throw std::runtime_error("Wrong status"); }
-        Keyspace k;
-        k.l = living;
-        k.status = status;
-        k.price = price;
-        arr.push_back(k);
-        return *this;
+        try {
+            if (len == allocated_len){
+                arr = my_realloc(arr, len, len + REALLOC_SIZE);
+            }
+            arr[len].l = living;
+            arr[len].status = status;
+            arr[len].price = price;
+            ++len;
+            return *this;
+        } catch (...) { throw; }
     }
 
     int Table::findLiving(Address& addr) const {
         try{
-            std::vector<Keyspace>::const_iterator it;
+            Iterator it;
             Living* l;
             for (it = arr.begin(); it != arr.end(); ++it){
                 l = it->l;
                 if (l && l->getAddr() && *(l->getAddr()) == addr){
-                    return std::distance(arr.begin(), it);
+                    return distance(arr.begin(), it);
                 }
             }
             return -1;
@@ -133,19 +143,20 @@ namespace Prog3 {
     }
 
     Table &Table::removeLiving(unsigned int ind){
-        if (ind >= arr.size()) { throw std::runtime_error("Wrong index"); }
+        if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try{
             delete arr[ind].l;
-            arr[ind] = arr[arr.size()-1];
-            arr.pop_back();
+            arr[ind] = arr[len-1];
+            --len;
         } catch (...) { throw; }
         return *this;
     }
 
+    template <typename T>
     ostream& operator << (ostream& s, const Table& table){
-        vector<Keyspace>::iterator it;
-        vector<Keyspace>& arr = table.getLivingArr();
+        Iterator it;
+        T* arr = table.getLivingArr();
         for (it = arr.begin(); it != arr.end(); ++it){
             if (it->l) { s << *(it->l); } 
             else { throw std::runtime_error("No pointer to living"); }

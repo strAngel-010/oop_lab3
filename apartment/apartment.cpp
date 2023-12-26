@@ -54,7 +54,7 @@ namespace Prog3{
 
     Apartment &Apartment::addRoom(const Room& room){
         try {
-            rooms = (Room*)room_realloc(rooms, len, len+1);
+            rooms = (Room*)my_realloc(rooms, len, len+1);
             rooms[len] = room;
             ++len;
         } catch(...){ throw; }

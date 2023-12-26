@@ -39,7 +39,6 @@ namespace Prog3 {
             friend std::ostream& operator << (std::ostream&, const Cottage&);
             friend std::istream& operator >> (std::istream&, Cottage&);
     };
-    const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size);
     int find_cottage(const Address& addr, const Cottage* arr, int len);
 }
 

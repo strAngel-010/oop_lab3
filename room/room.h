@@ -33,8 +33,6 @@ namespace Prog3{
             friend ostream& operator << (ostream&, const Room&);
             friend istream& operator >> (istream&, Room&);
     };
-
-    const Room* room_realloc(const Room* arr, int prev_size, int size);
 }
 
 #endif

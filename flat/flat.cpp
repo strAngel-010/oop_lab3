@@ -1,13 +1,6 @@
 #include "flat.h"
 
 namespace Prog3{
-    /*
-    Flat::Flat() : Living() {
-        try { rooms = new Room[4]; }
-        catch (...) { throw; }
-    }
-    */
-
     Flat::Flat(const Flat& ob) : Living(nullptr) {
         try{
             addr = new Address(*ob.addr);

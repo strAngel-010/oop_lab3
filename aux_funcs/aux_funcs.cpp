@@ -25,5 +25,13 @@ namespace Prog3{
         return 0;
     }
 
-    //ToDo: add template realloc
+    template <typename T>
+    T* my_realloc(const T* arr, int prev_size, int size){
+        try{
+            T* new_arr = new T[size];
+            for (int i = 0; i < prev_size; ++i){ new_arr[i] = (T*)arr[i]; }
+            delete[] arr;
+            return new_arr;
+        } catch (...){ throw; }
+    }
 }

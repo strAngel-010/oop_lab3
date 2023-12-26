@@ -114,15 +114,6 @@ namespace Prog3{
         return *this;
     }
 
-    const Cottage* cottage_realloc(const Cottage* arr, int prev_size, int size){
-        try{
-            Cottage* new_arr = new Cottage[size];
-            for (int i = 0; i < prev_size; ++i){ new_arr[i] = arr[i]; }
-            delete[] arr;
-            return new_arr;
-        } catch (...){ throw; }
-    }
-
     int find_cottage(const Address& addr, const Cottage* arr, int len){
         try {
             for (int i = 0; i < len; ++i){
@@ -152,7 +143,7 @@ namespace Prog3{
         try {
             unsigned int len;
             Living** living = cottage.getLiving(len);
-            living = living_realloc((const Living**)living, len, len+1);
+            living = my_realloc(living, len, len+1);
             ++len;
 
             int ans;

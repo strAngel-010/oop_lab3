@@ -4,6 +4,7 @@
 #include <iostream>
 #include "../address/address.h"
 #include "../room/room.h"
+#include "../aux_funcs/aux_funcs.h"
 
 namespace Prog3 {
     class Living {
@@ -32,7 +33,6 @@ namespace Prog3 {
             friend ostream& operator << (ostream&, const Living&);
             friend istream& operator >> (istream&, Living&);
     };
-    Living** living_realloc(const Living** arr, int prev_size, int size);
 }
 
 #endif
