@@ -16,6 +16,7 @@ add_subdirectory(aux_funcs)
 
 add_executable(main main.cpp)
 target_link_libraries(main app living cottage flat room table address aux_funcs apartment)
+#target_link_libraries(main living cottage flat room table address aux_funcs apartment)
 #add_executable(testing tests/testing.cpp)
 #target_link_libraries(testing apartment cottage flat room table address living)
 #add_compile_options(-fprofile-arcs -ftest-coverage)

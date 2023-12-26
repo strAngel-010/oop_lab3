@@ -11,6 +11,7 @@
 #include "../aux_funcs/aux_funcs.h"
 
 using std::vector;
+using std::endl;
 
 namespace Prog3{
     struct Keyspace {
@@ -39,18 +40,21 @@ namespace Prog3{
                     auto &operator++() { ptr++; return *this; }
                     auto operator++(int) { auto tmp = *this; ++(*this); return tmp; }
                     auto operator<=>(const TableIterator &) const = default;
-                    auto operator = (const TableIterator &it){ 
-                        ptr = it.ptr; 
+                    TableIterator& operator=(const TableIterator &it) {
+                        ptr = it.ptr;
                         start = it.start;
                         sentinel = it.sentinel;
-                    };
+                        return *this;
+                    }
                     difference_type operator - (const TableIterator &it){ return ptr - it.ptr; }
                     auto begin() {return start;}
                     auto end() {return sentinel;}
             };
 
             using Iterator = TableIterator;
-            typename std::ptrdiff_t distance(Iterator first, Iterator last) { return last - first; }
+            static std::ptrdiff_t distance(Iterator first, Iterator last) {
+                return last - first;
+            }
 
             Table() = default;
             Table(Living** arr, unsigned int len, int* status = nullptr, int* prices = nullptr);
@@ -74,7 +78,27 @@ namespace Prog3{
             Iterator begin() const { return Iterator(arr, arr+len); }
             Iterator end() const { return Iterator(arr+len, arr+len); }
 
-            friend ostream& operator << (ostream&, const Table<Keyspace>&);
+            friend ostream& operator << (ostream& s, const Table<T>& table){
+                Iterator it;
+                for (it = table.begin(); it != table.end(); ++it){
+                    if (it->l) { s << *(it->l); } 
+                    else { throw std::runtime_error("No pointer to living"); }
+                    switch (it->status){
+                        case -1:
+                            s << "No information about owners" << endl;
+                            break;
+                        case 0:
+                            s << "No current owners" << endl;
+                            break;
+                        case 1:
+                            s << "Living is owned" << endl;
+                            break;
+                        default: throw std::runtime_error("Wrong status information");
+                    }
+                    s << "Price per square meter: " << it->price << endl << endl;
+                }
+                return s;
+            }
 
         private:
             T* arr = nullptr;
@@ -82,6 +106,7 @@ namespace Prog3{
             int allocated_len = 0;
             //static_assert(std::forward_iterator<TableIterator>);
     };
+    #include "table.tcc"
 }
 
 #endif

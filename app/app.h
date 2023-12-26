@@ -15,16 +15,17 @@ namespace Prog3{
             Table<Keyspace> table;
             Cottage* cottages = nullptr;
             int len = 0;
-        public:
-            App() = default;
-            ~App();
-
-            App& start();
+            
             int start_dialog(int& ans);
             int check_in(Table<Keyspace>& table, Cottage** arr, int& len);
             void check_out(Table<Keyspace>& table);
             void print_unsettled(Table<Keyspace>& table);
             void print_cheapest(Table<Keyspace>& table);
+        public:
+            App() = default;
+            ~App();
+
+            App& start();
     };
 }
 
