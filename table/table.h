@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <vector>
+#include <iterator>
 #include "../living/living.h"
 #include "../apartment/apartment.h"
 #include "../flat/flat.h"
@@ -10,15 +11,39 @@
 using std::vector;
 
 namespace Prog3{
+    template <typename T>
+    class TableIterator {
+        using difference_type = std::ptrdiff_t;
+        using element_type = T;
+        using pointer = element_type *;
+        using reference = element_type &;
+        using iterator_category = std::forward_iterator_tag;
+        private:
+            pointer ptr, start, sentinel;
+            static_assert(std::sentinel_for<decltype(sentinel), decltype(ptr));
+        public:
+            Iterator() { throw std::runtime_error("Not implemented"); }
+            Iterator(pointer ptr, pointer sentinel) : ptr(ptr), start(ptr), sentinel(sentinel) {}
+            reference operator*() const { return *ptr; }
+            auto &operator++() { ptr++; return *this; }
+            auto operator++(int) { auto tmp = *this; ++(*this); return tmp; }
+            auto operator<=>(const Iterator &) const = default;
+            auto begin() {return start;}
+            auto end() {return sentinel;}
+    };
+
     struct Keyspace {
         Living* l = nullptr;
         int status = -1;
         int price = 0;
     };
 
+    template <typename T>
     class Table{
+        using Iterator = TableIterator<T>
         private:
-            vector<Keyspace> arr;
+            T* arr = nullptr;
+            static_assert(std::forward_iterator<TableIterator>);
         public:
             Table() = default;
             Table(Living** arr, unsigned int len, int* status = nullptr, int* prices = nullptr);
