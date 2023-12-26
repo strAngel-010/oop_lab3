@@ -24,14 +24,4 @@ namespace Prog3{
         if (s.bad()) { throw std::runtime_error("Input broken"); }
         return 0;
     }
-
-    template <typename T>
-    T* my_realloc(const T* arr, int prev_size, int size){
-        try{
-            T* new_arr = new T[size];
-            for (int i = 0; i < prev_size; ++i){ new_arr[i] = (T*)arr[i]; }
-            delete[] arr;
-            return new_arr;
-        } catch (...){ throw; }
-    }
 }

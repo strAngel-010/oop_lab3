@@ -3,11 +3,12 @@
 using std::vector;
 using std::endl;
 
-template <typename T>
-using Iterator = Prog3::Table<T>::TableIterator;
-
 namespace Prog3 {
-    Table::Table(Living** arr, unsigned int len, int* status, int* prices) {
+    template <typename T>
+    using Iterator = Table<T>::TableIterator;
+
+    template <typename T>
+    Table<T>::Table(Living** arr, unsigned int len, int* status, int* prices) {
         try {
             this->arr = new Keyspace[len];
             this->len = len;
@@ -22,7 +23,8 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    Table::~Table(){
+    template <typename T>
+    Table<T>::~Table(){
         Iterator it;
         for (it = arr.begin(); it != arr.end(); ++it){
             delete it->l;
@@ -30,7 +32,8 @@ namespace Prog3 {
         delete[] arr;
     }
 
-    Table &Table::setLiving(Living** arr, unsigned int len) {
+    template <typename T>
+    Table<T> &Table<T>::setLiving(Living** arr, unsigned int len) {
         try {
             if (this->arr) { delete[] this->arr; }
             this->arr = nullptr;
@@ -43,7 +46,8 @@ namespace Prog3 {
         return *this;
     }
 
-    Table &Table::setStatus(unsigned int ind, int status){
+    template <typename T>
+    Table<T> &Table<T>::setStatus(unsigned int ind, int status){
         if (status < -1 || status > 1){
             throw std::runtime_error("Wrong status (must be >=-1 && <= 1)");
         }
@@ -57,7 +61,8 @@ namespace Prog3 {
         return *this;
     }
 
-    Table &Table::setPrice(unsigned int ind, int price){
+    template <typename T>
+    Table<T> &Table<T>::setPrice(unsigned int ind, int price){
         if (ind >= len) {
             throw std::runtime_error("Wrong index");
         }
@@ -67,7 +72,8 @@ namespace Prog3 {
         return *this;
     }
 
-    Living* Table::getLiving(unsigned int ind) const {
+    template <typename T>
+    Living* Table<T>::getLiving(unsigned int ind) const {
         try{
             if (ind >= len) { throw std::runtime_error("Wrong index"); }
             return arr[ind].l;
@@ -75,21 +81,24 @@ namespace Prog3 {
         catch (...) { throw; }
     }
 
-    int Table::getStatus(unsigned int ind) const {
+    template <typename T>
+    int Table<T>::getStatus(unsigned int ind) const {
         if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try { return arr[ind].status; }
         catch (...) { throw; }
     }
 
-    int Table::getPrice(unsigned int ind) const {
+    template <typename T>
+    int Table<T>::getPrice(unsigned int ind) const {
         if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try { return arr[ind].price; }
         catch (...) { throw; }
     }
 
-    Table &Table::addLiving(Living* living, int status, int price){
+    template <typename T>
+    Table<T> &Table<T>::addLiving(Living* living, int status, int price){
         if (status < -1 || status > 1) { throw std::runtime_error("Wrong status"); }
         try {
             if (len == allocated_len){
@@ -103,7 +112,8 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    int Table::findLiving(Address& addr) const {
+    template <typename T>
+    int Table<T>::findLiving(Address& addr) const {
         try{
             Iterator it;
             Living* l;
@@ -117,7 +127,8 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    void Table::findCheapest(int& apartment_ind, int& flat_ind) const{
+    template <typename T>
+    void Table<T>::findCheapest(int& apartment_ind, int& flat_ind) const{
         try{
             apartment_ind = -1;
             flat_ind = -1;
@@ -142,7 +153,8 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    Table &Table::removeLiving(unsigned int ind){
+    template <typename T>
+    Table<T> &Table<T>::removeLiving(unsigned int ind){
         if (ind >= len) { throw std::runtime_error("Wrong index"); }
 
         try{
@@ -154,8 +166,8 @@ namespace Prog3 {
     }
 
     template <typename T>
-    ostream& operator << (ostream& s, const Table& table){
-        Iterator it;
+    ostream& operator << (ostream& s, const Table<T>& table){
+        Iterator<Keyspace> it;
         T* arr = table.getLivingArr();
         for (it = arr.begin(); it != arr.end(); ++it){
             if (it->l) { s << *(it->l); } 

@@ -56,9 +56,9 @@ namespace Prog3{
             Table(Living** arr, unsigned int len, int* status = nullptr, int* prices = nullptr);
             ~Table();
 
-            Table &setLiving(T* arr, unsigned int len);
-            Table &setStatus(unsigned int ind, int status);
-            Table &setPrice(unsigned int ind, int price);
+            Table<T> &setLiving(Living** arr, unsigned int len);
+            Table<T> &setStatus(unsigned int ind, int status);
+            Table<T> &setPrice(unsigned int ind, int price);
 
             Living* getLiving(unsigned int ind) const;
             unsigned int getLen() const noexcept { return arr.size(); }
@@ -66,10 +66,10 @@ namespace Prog3{
             int getPrice(unsigned int ind) const;
             T* getLivingArr() const noexcept { return arr; }
 
-            Table &addLiving(Living* living, int status = 0, int price = 0);
+            Table<T> &addLiving(Living* living, int status = 0, int price = 0);
             int findLiving(Address& addr) const;
             void findCheapest(int& apartment_ind, int& flat_ind) const;
-            Table &removeLiving(unsigned int ind);
+            Table<T> &removeLiving(unsigned int ind);
 
             Iterator begin() const { return Iterator(arr, arr+len); }
             Iterator end() const { return Iterator(arr+len, arr+len); }

@@ -9,7 +9,14 @@ namespace Prog3 {
     int input_string(std::istream& s, const char* msg, std::string& str);
 
     template <typename T>
-    T* my_realloc(const T* arr, int prev_size, int size);
+    T* my_realloc(T* arr, int prev_size, int size){
+        try{
+            T* new_arr = new T[size];
+            for (int i = 0; i < prev_size; ++i){ new_arr[i] = arr[i]; }
+            delete[] arr;
+            return new_arr;
+        } catch (...){ throw; }
+    }
 }
 
 #endif
