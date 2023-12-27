@@ -17,16 +17,18 @@ namespace Prog3{
             int len = 0;
             
             int start_dialog(int& ans);
-            int check_in(Table<Keyspace>& table, Cottage** arr, int& len);
-            void check_out(Table<Keyspace>& table);
-            void print_unsettled(Table<Keyspace>& table);
-            void print_cheapest(Table<Keyspace>& table);
+            int check_in();
+            void check_out();
+            void print_unsettled();
+            void print_cheapest();
         public:
             App() = default;
             ~App();
 
             App& start();
     };
+
+    Keyspace* keyspace_realloc(Keyspace* arr, int prev_size, int size);
 }
 
 #endif

@@ -8,9 +8,3 @@ int main(){
     App app;
     app.start();
 }
-
-/*
-int main(){
-    Table<Keyspace> table;
-}
-*/

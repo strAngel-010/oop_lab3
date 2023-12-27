@@ -19,11 +19,13 @@ Table<T>::Table(Living** arr, unsigned int len, int* status, int* prices) {
 
 template <typename T>
 Table<T>::~Table(){
-    Iterator it;
-    for (it = begin(); it != end(); ++it){
-        delete it->l;
+    if (arr){
+        Iterator it;
+        for (it = begin(); it != end(); ++it){
+            delete it->l;
+        }
+        delete[] arr;
     }
-    delete[] arr;
 }
 
 template <typename T>
@@ -96,18 +98,20 @@ Table<T> &Table<T>::addLiving(Living* living, int status, int price){
     if (status < -1 || status > 1) { throw std::runtime_error("Wrong status"); }
     try {
         if (len == allocated_len){
-            arr = my_realloc(arr, len, len + REALLOC_SIZE);
+            arr = keyspace_realloc(arr, len, len + REALLOC_SIZE);
         }
         arr[len].l = living;
         arr[len].status = status;
         arr[len].price = price;
         ++len;
+        allocated_len += REALLOC_SIZE;
         return *this;
     } catch (...) { throw; }
 }
 
 template <typename T>
 int Table<T>::findLiving(Address& addr) const {
+    if (!arr) { return -1; }
     try{
         Iterator it;
         Living* l;
@@ -171,15 +175,18 @@ void Table<T>::findCheapest_mt(int& apartment_ind, int& flat_ind) {
     vector<jthread> threads(threadNum);
 
     std::mutex living_mux;
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < threadNum; i++) {
         int start_i = i * len / threadNum;
         int end_i = (i + 1) * len / threadNum;
         Iterator start(arr + start_i, arr + len);
         Iterator end(arr + end_i, arr + len);
         auto thread_func = [&](){
-            thread_local int cur_a = -1;
-            thread_local int cur_f = -1;
+            int cur_a = -1;
+            int cur_f = -1;
             cheapest_thread(start, end, cur_a, cur_f);
+            
+            cout << cur_a << " " << cur_f << endl;
+
             living_mux.lock();
             if (cur_a != -1 && (apartment_ind == -1 || arr[cur_a].price < arr[apartment_ind].price)){
                 apartment_ind = cur_a;

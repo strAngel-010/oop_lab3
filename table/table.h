@@ -39,8 +39,8 @@ namespace Prog3{
                     pointer operator -> () const { return ptr; }
                     auto &operator++() { ptr++; return *this; }
                     auto operator++(int) { auto tmp = *this; ++(*this); return tmp; }
-                    //auto operator+=(const int n) { auto tmp = *this; *this += n ; return tmp; }
                     auto operator<=>(const TableIterator &) const = default;
+                    bool operator != (const TableIterator & it) const{ return ptr != it.ptr; }
                     auto operator=(const TableIterator &it) {
                         ptr = it.ptr;
                         start = it.start;
@@ -84,7 +84,7 @@ namespace Prog3{
             friend ostream& operator << (ostream& s, const Table<T>& table){
                 Iterator it;
                 for (it = table.begin(); it != table.end(); ++it){
-                    if (it->l) { s << *(it->l); } 
+                    if (it->l) { s << *(it->l); }
                     else { throw std::runtime_error("No pointer to living"); }
                     switch (it->status){
                         case -1:

@@ -18,16 +18,16 @@ namespace Prog3 {
                 if (func_res) { break; }
                 switch (ans){
                     case 1:
-                        func_res = check_in(table, &cottages, len);
+                        func_res = check_in();
                         break;
                     case 2:
-                        check_out(table);
+                        check_out();
                         break;
                     case 3:
-                        print_unsettled(table);
+                        print_unsettled();
                         break;
                     case 4:
-                        print_cheapest(table);
+                        print_cheapest();
                         break;
                     case 5:
                         cout << table;
@@ -56,7 +56,7 @@ namespace Prog3 {
         }
     }
 
-    int App::check_in(Table<Keyspace>& table, Cottage** arr, int& len){
+    int App::check_in(){
         try{
             Address* address = new Address();
             cin >> *address;
@@ -72,31 +72,31 @@ namespace Prog3 {
             } else {
                 cout << "No living with this address. Creating new living..." << endl;
                 Address* cottage_addr = new Address(address->getStreet(), address->getBuilding());
-                res = find_cottage(*cottage_addr, *arr, len);
+                res = find_cottage(*cottage_addr, cottages, len);
                 unsigned int living_len;
                 Living* living_to_add;
                 if (res != -1){
                     delete cottage_addr;
-                    cin >> *(arr[res]);
+                    cin >> cottages[res];
                     if (cin.eof()){
                         delete address;
                         return 1;
                     }
-                    living_to_add = arr[res]->getLiving(living_len)[living_len-1];
+                    living_to_add = cottages[res].getLiving(living_len)[living_len-1];
                     living_to_add->setAddr(address);
                 } else {
                     cout << "No cottage for this living found. Creating new cottage..." << endl;
-                    *arr = (Cottage*)my_realloc(*arr, len, len+1);
+                    cottages = (Cottage*)my_realloc(cottages, len, len+1);
                     ++len;
-                    cin >> *arr[len-1];
+                    cin >> cottages[len-1];
                     if (cin.eof()){
                         delete address;
                         delete cottage_addr;
                         return 1;
                     }
-                    living_to_add = arr[len-1]->getLiving(living_len)[living_len-1];
+                    living_to_add = cottages[len-1].getLiving(living_len)[living_len-1];
                     living_to_add->setAddr(address);
-                    arr[len-1]->setAddr(cottage_addr);
+                    cottages[len-1].setAddr(cottage_addr);
                 }
 
                 int price;
@@ -115,7 +115,7 @@ namespace Prog3 {
         return 0;
     }
 
-    void App::check_out(Table<Keyspace>& table){
+    void App::check_out(){
         try {
             Address* address = new Address();
             cin >> *address;
@@ -135,7 +135,7 @@ namespace Prog3 {
         } catch (...) { throw; }
     }
 
-    void App::print_unsettled(Table<Keyspace>& table){
+    void App::print_unsettled(){
         Table<Keyspace>::TableIterator it;
         for (it = table.begin(); it != table.end(); ++it){
             if (it->status == 0) { cout << *(it->l); }
@@ -143,7 +143,7 @@ namespace Prog3 {
         cout << endl;
     }
 
-    void App::print_cheapest(Table<Keyspace>& table){
+    void App::print_cheapest(){
         int apartment_ind = -1;
         int flat_ind = -1;
         try {
@@ -152,15 +152,28 @@ namespace Prog3 {
             if (apartment_ind != -1){
                 cout << "Cheapest apartment: " << endl;
                 cout << *(arr[apartment_ind].l);
-                cout << "Price per sq meter:" << arr[apartment_ind].price;
+                cout << "Price per sq meter: " << arr[apartment_ind].price << endl;
             }
             
             if (flat_ind != -1){
                 cout << "Cheapest flat: " << endl;
                 cout << *(arr[flat_ind].l);
-                cout << "Price per sq meter:" << arr[flat_ind].price;
+                cout << "Price per sq meter: " << arr[flat_ind].price << endl;
             }
             cout << endl;
         } catch (...) { throw; }
+    }
+
+    Keyspace* keyspace_realloc(Keyspace* arr, int prev_size, int size){
+        try{
+            Keyspace* new_arr = new Keyspace[size];
+            for (int i = 0; i < prev_size; ++i){ 
+                new_arr[i].l = arr[i].l; 
+                new_arr[i].status = arr[i].status; 
+                new_arr[i].price = arr[i].price; 
+            }
+            delete[] arr;
+            return new_arr;
+        } catch (...){ throw; }
     }
 }
