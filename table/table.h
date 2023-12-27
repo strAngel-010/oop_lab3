@@ -5,13 +5,13 @@
 #include <stdexcept>
 #include <vector>
 #include <iterator>
+#include <thread>
 #include "../living/living.h"
 #include "../apartment/apartment.h"
 #include "../flat/flat.h"
 #include "../aux_funcs/aux_funcs.h"
 
-using std::vector;
-using std::endl;
+using std::vector, std::endl, std::cout, std::jthread;
 
 namespace Prog3{
     struct Keyspace {
@@ -39,8 +39,9 @@ namespace Prog3{
                     pointer operator -> () const { return ptr; }
                     auto &operator++() { ptr++; return *this; }
                     auto operator++(int) { auto tmp = *this; ++(*this); return tmp; }
+                    //auto operator+=(const int n) { auto tmp = *this; *this += n ; return tmp; }
                     auto operator<=>(const TableIterator &) const = default;
-                    TableIterator& operator=(const TableIterator &it) {
+                    auto operator=(const TableIterator &it) {
                         ptr = it.ptr;
                         start = it.start;
                         sentinel = it.sentinel;
@@ -73,6 +74,8 @@ namespace Prog3{
             Table<T> &addLiving(Living* living, int status = 0, int price = 0);
             int findLiving(Address& addr) const;
             void findCheapest(int& apartment_ind, int& flat_ind) const;
+            void cheapest_thread(Iterator cur, Iterator end, int& apartment_ind, int& flat_ind);
+            void findCheapest_mt(int& apartment_ind, int& flat_ind);
             Table<T> &removeLiving(unsigned int ind);
 
             Iterator begin() const { return Iterator(arr, arr+len); }
@@ -104,7 +107,6 @@ namespace Prog3{
             T* arr = nullptr;
             int len = 0;
             int allocated_len = 0;
-            //static_assert(std::forward_iterator<TableIterator>);
     };
     #include "table.tcc"
 }

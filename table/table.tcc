@@ -148,6 +148,52 @@ void Table<T>::findCheapest(int& apartment_ind, int& flat_ind) const{
 }
 
 template <typename T>
+void Table<T>::cheapest_thread(Iterator cur, Iterator end, int& apartment_ind, int& flat_ind) {
+    for (; cur != end; ++cur){
+        if (dynamic_cast<Apartment*>(cur->l)){
+            if (apartment_ind == -1 || arr[apartment_ind].price < cur->price) {
+                apartment_ind = distance(begin(), cur);
+            }
+        } else {
+            if (flat_ind == -1 || arr[flat_ind].price < cur->price) {
+                flat_ind = distance(begin(), cur);
+            }
+        }
+    }
+}
+
+template <typename T>
+void Table<T>::findCheapest_mt(int& apartment_ind, int& flat_ind) {
+    apartment_ind = -1;
+    flat_ind = -1;
+    auto threadNum = jthread::hardware_concurrency();
+    cout << "Thread Num: " << threadNum << endl;
+    vector<jthread> threads(threadNum);
+
+    std::mutex living_mux;
+    for (int i = 0; i < len; i++) {
+        int start_i = i * len / threadNum;
+        int end_i = (i + 1) * len / threadNum;
+        Iterator start(arr + start_i, arr + len);
+        Iterator end(arr + end_i, arr + len);
+        auto thread_func = [&](){
+            thread_local int cur_a = -1;
+            thread_local int cur_f = -1;
+            cheapest_thread(start, end, cur_a, cur_f);
+            living_mux.lock();
+            if (cur_a != -1 && (apartment_ind == -1 || arr[cur_a].price < arr[apartment_ind].price)){
+                apartment_ind = cur_a;
+            }
+            if (cur_f != -1 && (flat_ind == -1 || arr[cur_f].price < arr[flat_ind].price)){
+                flat_ind = cur_f;
+            }
+            living_mux.unlock();
+        };
+        threads[i] = jthread(thread_func);
+    }
+}
+
+template <typename T>
 Table<T> &Table<T>::removeLiving(unsigned int ind){
     if (ind >= len) { throw std::runtime_error("Wrong index"); }
 

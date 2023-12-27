@@ -84,8 +84,7 @@ namespace Prog3 {
                     }
                     living_to_add = arr[res]->getLiving(living_len)[living_len-1];
                     living_to_add->setAddr(address);
-                }
-                else {
+                } else {
                     cout << "No cottage for this living found. Creating new cottage..." << endl;
                     *arr = (Cottage*)my_realloc(*arr, len, len+1);
                     ++len;
@@ -148,7 +147,7 @@ namespace Prog3 {
         int apartment_ind = -1;
         int flat_ind = -1;
         try {
-            table.findCheapest(apartment_ind, flat_ind);
+            table.findCheapest_mt(apartment_ind, flat_ind);
             Keyspace* arr = table.getLivingArr();
             if (apartment_ind != -1){
                 cout << "Cheapest apartment: " << endl;
