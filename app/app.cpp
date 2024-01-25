@@ -32,6 +32,9 @@ namespace Prog3 {
                     case 5:
                         cout << table;
                         break;
+                    case 6:
+                        compare_time();
+                        break;
                     default:
                         throw std::runtime_error("Error in switch");
                 }
@@ -49,9 +52,10 @@ namespace Prog3 {
             cout << "3. List all unoccupied living" << endl;
             cout << "4. Find cheapest living" << endl;
             cout << "5. Print table" << endl;
+            cout << "6. Compare time (find cheapest living)" << endl;
             cout << "----------" << endl;
             
-            try { return input_num(cin, nullptr, 1, 5, ans); }
+            try { return input_num(cin, nullptr, 1, 6, ans); }
             catch (...) { throw; }
         }
     }
@@ -143,11 +147,13 @@ namespace Prog3 {
         cout << endl;
     }
 
-    void App::print_cheapest(){
+    void App::print_cheapest(int is_mt){
         int apartment_ind = -1;
         int flat_ind = -1;
         try {
-            table.findCheapest_mt(apartment_ind, flat_ind);
+            if (is_mt) {
+                table.findCheapest_mt(apartment_ind, flat_ind);
+            } else { table.findCheapest(apartment_ind, flat_ind); }
             Keyspace* arr = table.getLivingArr();
             if (apartment_ind != -1){
                 cout << "Cheapest apartment: " << endl;
@@ -161,6 +167,64 @@ namespace Prog3 {
                 cout << "Price per sq meter: " << arr[flat_ind].price << endl;
             }
             cout << endl;
+        } catch (...) { throw; }
+    }
+
+    void App::compare_time(){
+        try {
+            double avg_time = 0;
+            double avg_mt_time = 0;
+            int iterations = 10;
+            int elems;
+            int func_res = input_num(cin, "Enter number of elements: ", 1, std::numeric_limits<int>::max(), elems);
+            if (func_res) { return; }
+            srand(time(0));
+            for (int i = 0; i < iterations; ++i){
+                cout << "Iteration " << i+1 << endl;
+                generate_elems(elems);
+
+                cout << "Finding cheapest living with 1 thread:" << endl;
+                auto start = clock();
+                print_cheapest(0);
+                auto end = clock();
+                avg_time += static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000;
+                cout << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000 << " ms" << endl;
+                cout << "----------" << endl;
+                
+                cout << "Finding cheapest living with multithread:" << endl;
+                start = clock();
+                print_cheapest(1);
+                end = clock();
+                avg_mt_time += static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000;
+                cout << static_cast<double>(end - start) / CLOCKS_PER_SEC * 1000 << " ms" << endl;
+                cout << "--------------------" << endl;
+
+                table.erase();
+            }
+            avg_mt_time /= iterations;
+            avg_time /= iterations;
+            cout << "Average time (1 thread): " << avg_time << " ms" << endl;
+            cout << "Average time (Multithread): " << avg_mt_time << " ms" << endl;
+        } catch (...) { throw; }
+    }
+
+    void App::generate_elems(int elems){
+        try{
+            int type;
+            Living* living_to_add = nullptr;
+            for (int i = 0; i < elems; ++i){
+                switch (rand()%2){
+                    case 0:
+                        living_to_add = new Apartment();
+                        break;
+                    case 1:
+                        living_to_add = new Flat();
+                        break;
+                    default:
+                        throw std::runtime_error("Error in switch");
+                }
+                table.addLiving(living_to_add, 0, rand()%10000 + 1);
+            }
         } catch (...) { throw; }
     }
 

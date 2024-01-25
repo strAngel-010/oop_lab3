@@ -99,12 +99,12 @@ Table<T> &Table<T>::addLiving(Living* living, int status, int price){
     try {
         if (len == allocated_len){
             arr = keyspace_realloc(arr, len, len + REALLOC_SIZE);
+            allocated_len += REALLOC_SIZE;
         }
         arr[len].l = living;
         arr[len].status = status;
         arr[len].price = price;
         ++len;
-        allocated_len += REALLOC_SIZE;
         return *this;
     } catch (...) { throw; }
 }
@@ -133,17 +133,11 @@ void Table<T>::findCheapest(int& apartment_ind, int& flat_ind) const{
         Iterator it;
         for (it = begin(); it != end(); ++it){
             if (dynamic_cast<Apartment*>(it->l)){
-                if (apartment_ind == -1) { 
-                    apartment_ind = distance(begin(), it);
-                }
-                if (arr[apartment_ind].price < it->price) { 
+                if (apartment_ind == -1 || arr[apartment_ind].price > it->price) { 
                     apartment_ind = distance(begin(), it);
                 }
             } else {
-                if (flat_ind == -1) { 
-                    flat_ind = distance(begin(), it);
-                }
-                if (arr[flat_ind].price < it->price) { 
+                if (flat_ind == -1 || arr[flat_ind].price > it->price) { 
                     flat_ind = distance(begin(), it);
                 }
             }
@@ -152,15 +146,19 @@ void Table<T>::findCheapest(int& apartment_ind, int& flat_ind) const{
 }
 
 template <typename T>
-void Table<T>::cheapest_thread(Iterator cur, Iterator end, int& apartment_ind, int& flat_ind) {
-    for (; cur != end; ++cur){
-        if (dynamic_cast<Apartment*>(cur->l)){
-            if (apartment_ind == -1 || arr[apartment_ind].price < cur->price) {
-                apartment_ind = distance(begin(), cur);
+void Table<T>::local_min(Iterator cur, Iterator end, int& local_apartment_ind, int& local_flat_ind) {
+    thread_local int min_apartment_price = std::numeric_limits<int>::max();
+    thread_local int min_flat_price = std::numeric_limits<int>::max();
+    for (; cur != end; ++cur) {
+        if (dynamic_cast<Apartment*>(cur->l)) {
+            if (cur->price < min_apartment_price) {
+                local_apartment_ind = distance(begin(), cur);
+                min_apartment_price = cur->price;
             }
         } else {
-            if (flat_ind == -1 || arr[flat_ind].price < cur->price) {
-                flat_ind = distance(begin(), cur);
+            if (cur->price < min_flat_price) {
+                local_flat_ind = distance(begin(), cur);
+                min_flat_price = cur->price;
             }
         }
     }
@@ -170,8 +168,8 @@ template <typename T>
 void Table<T>::findCheapest_mt(int& apartment_ind, int& flat_ind) {
     apartment_ind = -1;
     flat_ind = -1;
-    auto threadNum = jthread::hardware_concurrency();
-    cout << "Thread Num: " << threadNum << endl;
+    auto threadNum = 4;
+    cout << "Total threads: " << threadNum << endl;
     vector<jthread> threads(threadNum);
 
     std::mutex living_mux;
@@ -181,17 +179,15 @@ void Table<T>::findCheapest_mt(int& apartment_ind, int& flat_ind) {
         Iterator start(arr + start_i, arr + len);
         Iterator end(arr + end_i, arr + len);
         auto thread_func = [&](){
-            int cur_a = -1;
-            int cur_f = -1;
-            cheapest_thread(start, end, cur_a, cur_f);
-            
-            cout << cur_a << " " << cur_f << endl;
+            thread_local int cur_a = -1;
+            thread_local int cur_f = -1;
+            local_min(start, end, cur_a, cur_f);
 
             living_mux.lock();
-            if (cur_a != -1 && (apartment_ind == -1 || arr[cur_a].price < arr[apartment_ind].price)){
+            if (cur_a != -1 && (apartment_ind == -1 || arr[cur_a].price < arr[apartment_ind].price)) {
                 apartment_ind = cur_a;
             }
-            if (cur_f != -1 && (flat_ind == -1 || arr[cur_f].price < arr[flat_ind].price)){
+            if (cur_f != -1 && (flat_ind == -1 || arr[cur_f].price < arr[flat_ind].price)) {
                 flat_ind = cur_f;
             }
             living_mux.unlock();
@@ -209,5 +205,14 @@ Table<T> &Table<T>::removeLiving(unsigned int ind){
         arr[ind] = arr[len-1];
         --len;
     } catch (...) { throw; }
+    return *this;
+}
+
+template <typename T>
+Table<T> &Table<T>::erase(){
+    if (arr) { delete[] arr; }
+    arr = nullptr;
+    len = 0;
+    allocated_len = 0;
     return *this;
 }

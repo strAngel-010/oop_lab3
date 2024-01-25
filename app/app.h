@@ -5,6 +5,8 @@
 #include <stdexcept>
 #include <string>
 #include <limits>
+#include <ctime>
+#include <atomic>
 #include "../table/table.h"
 #include "../cottage/cottage.h"
 #include "../aux_funcs/aux_funcs.h"
@@ -20,7 +22,9 @@ namespace Prog3{
             int check_in();
             void check_out();
             void print_unsettled();
-            void print_cheapest();
+            void print_cheapest(int is_mt = 1);
+            void compare_time();
+            void generate_elems(int elems);
         public:
             App() = default;
             ~App();

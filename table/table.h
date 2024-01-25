@@ -6,6 +6,7 @@
 #include <vector>
 #include <iterator>
 #include <thread>
+#include <atomic>
 #include "../living/living.h"
 #include "../apartment/apartment.h"
 #include "../flat/flat.h"
@@ -74,9 +75,10 @@ namespace Prog3{
             Table<T> &addLiving(Living* living, int status = 0, int price = 0);
             int findLiving(Address& addr) const;
             void findCheapest(int& apartment_ind, int& flat_ind) const;
-            void cheapest_thread(Iterator cur, Iterator end, int& apartment_ind, int& flat_ind);
+            void local_min(Iterator cur, Iterator end, int& local_apartment_ind, int& local_flat_ind);
             void findCheapest_mt(int& apartment_ind, int& flat_ind);
             Table<T> &removeLiving(unsigned int ind);
+            Table<T> &erase();
 
             Iterator begin() const { return Iterator(arr, arr+len); }
             Iterator end() const { return Iterator(arr+len, arr+len); }
